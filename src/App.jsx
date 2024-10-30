@@ -79,20 +79,72 @@ function App() {
 
   const [team, setTeam] = useState([])
   const [money, setMoney] = useState(100)
-  const [zombieFighters, setFighters] = useState(...dataFighters)
+  const [zombieFighters, setFighters] = useState([...dataFighters])
+  const [totalStrength, setStrength] = useState(0)
+  const [totalAgility, setAgility] = useState(0)
+
+
+  const handleAddFighter = (fighter) => {
+    if (money >= fighter.price) {
+      const newCurrency = money - fighter.price
+      const newAgility = totalAgility + fighter.agility
+      const newStrength = totalStrength + fighter.strength
+      const newTeam = [...team, fighter]
+      setTeam(newTeam)
+      setMoney(newCurrency)
+      setAgility(newAgility)
+      setStrength(newStrength)
+    } else {
+      alert(`Not enough money to buy ${fighter.name}`)
+    }
+  }
+
+  const handleRemoveFighter = (fighter, index) => {
+    const newCurrency = money + fighter.price
+    const newAgility = totalAgility - fighter.agility
+    const newStrength = totalStrength - fighter.strength
+    team.splice(index, 1)
+    setMoney(newCurrency)
+    setAgility(newAgility)
+    setStrength(newStrength)
+  }
 
   return (
     <>
       <div>
-        {zombieFighters.map((item, index) => {
-          <div key={index}>
-            <img src={item.img} alt="" />
-            <p>name: {item.name}</p>
-            <p>price: {item.price}</p>
-            <p>strength: {item.strength}</p>
-            <p>agility: {item.agility}</p>
-          </div>
-        })}
+        <h1>Zombie Fighter</h1>
+        <h2>Currency: {money}</h2>
+        <h2>Team Strength: {totalStrength}</h2>
+        <h2>Team Agility: {totalAgility}</h2>
+        <h2>My Team</h2>
+        <div className='team'>
+          {team.length
+            ? team.map((item, index) => (
+              <div key={index} className='card'>
+                <img src={item.img} alt="fighter" />
+                <p>Name: {item.name}</p>
+                <p>Price: {item.price}</p>
+                <p>Strength: {item.strength}</p>
+                <p>Agility: {item.agility}</p>
+                <button onClick={() => handleRemoveFighter(item, index)}>remove</button>
+              </div>
+            ))
+            : 'Pick some team members!'}
+        </div>
+
+        <h2>Choose your Fighters</h2>
+        <div className='fighters'>
+          {zombieFighters.map((item, index) => (
+            <div key={index} className='card'>
+              <img src={item.img} alt="fighter" />
+              <p>Name: {item.name}</p>
+              <p>Price: {item.price}</p>
+              <p>Strength: {item.strength}</p>
+              <p>Agility: {item.agility}</p>
+              <button onClick={() => handleAddFighter(item)}>Add</button>
+            </div>
+          ))}
+        </div>
       </div>
     </>
   )
